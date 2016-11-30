@@ -21,8 +21,8 @@ namespace Robotis_vsido_connect
         ComboBox comb;      //comポート一覧
         SerialPort serialport;    //しりあるポート
         List<byte> command_list = new List<byte>();
-        
-      //上位システム
+
+        //上位システム
         string ipOrHost = "127.0.0.1";
         int port = 50377;
         System.Net.Sockets.TcpClient tcp = null;
@@ -31,39 +31,39 @@ namespace Robotis_vsido_connect
         Thread TcpReadThread = null;
         NetworkStream ns = null;
 
-      //robotismini-wifi
+        //robotismini-wifi
         string RobotisHost = "192.168.4.1";
-        int RobotisPort =55555;
+        int RobotisPort = 55555;
         Client Cl;
-      
-      //他  
+
+        //他  
         System.Text.Encoding enc = null;
-        Thread motion_thread =null;
+        Thread motion_thread = null;
         Thread MotionThread = null;
         string fullpath = "";
         int timer_counter = 0;
-       
-/// <summary>
-/// モーションファイル(.csv)
-/// </summary>
-         string motion1file = "dash.csv";
+
+        /// <summary>
+        /// モーションファイル(.csv)
+        /// </summary>
+        string motion1file = "dash.csv";
         string motion2file = "byebye.csv";
         string motion3file = "circle.csv";
         string motion4file = "guru.csv";
         string defaultmotion = "default.csv";
         string kickmotion = "kick.csv";
-        string stepmotion = "step.csv";
+        string stepmotion = "boringstep.csv";
 
 
-    //フラグ
+        //フラグ
         bool isAction = false;
         bool loopflag = false;
         bool stopflag = false;
-        bool tcpflag  = false;
+        bool tcpflag = false;
         bool boring_flag = false;
-        bool iswifi =true;
+        bool iswifi = true;
 
-        
+
         public Form1()
         {
             InitializeComponent();
@@ -88,7 +88,7 @@ namespace Robotis_vsido_connect
             motion_thread = new Thread(FileAnalyze);
             motion_thread.IsBackground = true;
             motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
-            
+
         }
 
 
@@ -138,14 +138,15 @@ namespace Robotis_vsido_connect
                         Cl = new Client(RobotisHost, RobotisPort);
                         Cl.Send(serial_byte);
                     }
-                    catch {
+                    catch
+                    {
                         MessageBox.Show("接続できません", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                  }
+                }
                 else
                 {
                     serialport.Write(serial_byte, 0, serial_byte.Length);
-            
+
                 }
             }
             catch (Exception ex)
@@ -165,55 +166,65 @@ namespace Robotis_vsido_connect
             {
                 serialport.Close();
             }
+            else {
+                Cl.ClientClose();
+            }
             label13.Text = "status: 未接続";
             groupBox1.Enabled = false;
             groupBox2.Enabled = false;
+            boringTimer.Enabled = false;
         }
 
         //受信開始ボタン
         private void button3_Click(object sender, EventArgs e)
         {
-            try{
-            tcp = new System.Net.Sockets.TcpClient(ipOrHost, port);
-            label8.Text = "Client:" + ipOrHost + " :" + port; 
-            ns = tcp.GetStream();
-            ns.ReadTimeout = Timeout.Infinite;
-            ns.WriteTimeout = Timeout.Infinite;
-            enc = System.Text.Encoding.UTF8;
-            
-            tcpflag = true;
+            try
+            {
+                tcp = new System.Net.Sockets.TcpClient(ipOrHost, port);
+                label8.Text = "Client:" + ipOrHost + " :" + port;
+                ns = tcp.GetStream();
+                ns.ReadTimeout = Timeout.Infinite;
+                ns.WriteTimeout = Timeout.Infinite;
+                enc = System.Text.Encoding.UTF8;
 
-            TcpReadThread = new Thread(TcpRead);
-            TcpReadThread.IsBackground = true;
-            TcpReadThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-            TcpReadThread.Start();
+                tcpflag = true;
 
-            MotionThread = new Thread(TcpFunc);
-            MotionThread.IsBackground = true;
-            MotionThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-            MotionThread.Start();
-            }catch(Exception err){
+                TcpReadThread = new Thread(TcpRead);
+                TcpReadThread.IsBackground = true;
+                TcpReadThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                TcpReadThread.Start();
+
+                MotionThread = new Thread(TcpFunc);
+                MotionThread.IsBackground = true;
+                MotionThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                MotionThread.Start();
+            }
+            catch (Exception err)
+            {
                 MessageBox.Show(err.Message);
             }
 
-            textBox7.Enabled=true;
+            textBox7.Enabled = true;
             groupBox2.Enabled = true;
 
             //タイマーの作成
             boringTimer.Interval = 1000;
             boringTimer.Tick += new EventHandler(timer_tick);
-     
+
         }
-        private void timer_tick(object Sender, EventArgs e) {
+        private void timer_tick(object Sender, EventArgs e)
+        {
             timer_counter++;
-            if(timer_counter >int.Parse(textBox7.Text)){
+            if (timer_counter > int.Parse(textBox7.Text))
+            {
                 RandomMotion();
+                timer_counter = 0;
             }
             label19.Text = timer_counter.ToString() + "s";
         }
 
 
-        //受信関数
+        //上位システムから受信する関数
         void TcpRead()
         {
             while (true)
@@ -221,7 +232,7 @@ namespace Robotis_vsido_connect
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
                 byte[] resBytes = new byte[2048];
                 int resSize = 0;
-                int s ;
+                int s;
                 do
                 {
                     resSize = ns.Read(resBytes, 0, resBytes.Length);
@@ -235,20 +246,21 @@ namespace Robotis_vsido_connect
                 resMsg = enc.GetString(ms.GetBuffer(), 0, (int)ms.Length);
                 ms.Close();
                 resMsg = resMsg.TrimEnd('\n');
-               SplittedMes = resMsg.Split(';');
+                SplittedMes = resMsg.Split(';');
                 label15.Text = SplittedMes[1];
                 s = Cl.read();
             }
         }
-        //送る
-        void toServerSend(string sendMsg){
+        //上位システムへ送る
+        void toServerSend(string sendMsg)
+        {
             System.Text.Encoding enc = System.Text.Encoding.UTF8;
             byte[] sendBytes = enc.GetBytes(sendMsg + '\n');
             ns.Write(sendBytes, 0, sendBytes.Length);
 
         }
 
-    //ハンドモーション動作
+        //上位システム動作
         void TcpFunc()
         {
 
@@ -257,14 +269,15 @@ namespace Robotis_vsido_connect
 
                 if (resMsg != null && !isAction)
                 {
-                    timer_counter=0;
+                    timer_counter = 0;
                     SplittedMes = resMsg.Split(';');
                     if (SplittedMes[0] == "0001")  //うつよっ　ばーーん
                     {
                         resMsg = null;
                         timer_counter = 0;
                         string file = motion1file;
-                        if (file != ""){
+                        if (file != "")
+                        {
                             motion_thread = new Thread(FileAnalyze);
                             motion_thread.IsBackground = true;
                             motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
@@ -283,7 +296,7 @@ namespace Robotis_vsido_connect
                             motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
                             motion_thread.Start(file);
                         }
-                   }
+                    }
                     else if (SplittedMes[0] == "0003") //えっ　なんだろー
                     {
                         resMsg = null;
@@ -310,7 +323,8 @@ namespace Robotis_vsido_connect
                             motion_thread.Start(file);
                         }
                     }
-                    else if (SplittedMes[0] == "0000") {
+                    else if (SplittedMes[0] == "0000")
+                    {
                         resMsg = null;
                         string file = defaultmotion;
                         if (file != "")
@@ -319,20 +333,22 @@ namespace Robotis_vsido_connect
                             motion_thread.IsBackground = true;
                             motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
                             motion_thread.Start(file);
-                        }      
+                        }
                     }
                     resMsg = null;
                 }
             }
         }
 
-        void RandomMotion() {
+        void RandomMotion()
+        {
             Random rnd_res = new System.Random();
             double r_res = rnd_res.NextDouble();
             //70%の確立で
-            if (r_res < 0.7){
+            if (r_res < 0.7)
+            {
                 string file = stepmotion;
-                boring_flag = true;
+               
                 if (file != "")
                 {
                     motion_thread = new Thread(FileAnalyze);
@@ -342,7 +358,8 @@ namespace Robotis_vsido_connect
                 }
             }
             //30%
-            else {
+            else
+            {
                 string file = kickmotion;
                 if (file != "")
                 {
@@ -354,7 +371,7 @@ namespace Robotis_vsido_connect
             }
         }
 
-//ファイルから開く
+        //ファイルから開く
         private void button4_Click(object sender, EventArgs e)
         {
 
@@ -378,13 +395,12 @@ namespace Robotis_vsido_connect
             }
         }
 
-//csvからモーションコマンド送信
+        //csvからモーションコマンド送信
         void FileAnalyze(object filename)
         {
             int cnt = 0;
             int sleeptime = 0;
             isAction = true;
-            int stepcnt=0;
 
             while (true)
             {
@@ -400,6 +416,7 @@ namespace Robotis_vsido_connect
                             {
                                 if (tcpflag)
                                 {
+                                    //上位システム接続時にbusyを送る
                                     toServerSend("busy");
                                 }
                                 // ファイルから一行読み込む
@@ -415,21 +432,23 @@ namespace Robotis_vsido_connect
                                     cnt++;
                                     if (cnt == 4)
                                     {
-                                        //  sleeptime = Convert.ToInt32(value) * 10;
-                                        sleeptime = Int32.Parse(value, System.Globalization.NumberStyles.HexNumber) * 10;
+                                        //コマンドから各モーションの動作時間を算出
+                                         sleeptime = Int32.Parse(value, System.Globalization.NumberStyles.HexNumber) * 10;
                                     }
                                     command_list.Add(Convert.ToByte(value, 16));
                                 }
 
                                 //コマンドで設定した間隔でv-sido connectに送る
                                 byte[] command = command_list.ToArray();
-                                if (iswifi){
+                                if (iswifi)
+                                {
                                     Cl.Send(command);
                                 }
-                                else {
+                                else
+                                {
                                     serialport.Write(command, 0, command.Length);
                                 }
-                                System.Threading.Thread.Sleep(sleeptime); //送信間隔
+                                System.Threading.Thread.Sleep(sleeptime); //動作間隔
                                 cnt = 0;
                                 //中断フラグが立てば終わる
                                 if (stopflag)
@@ -446,10 +465,7 @@ namespace Robotis_vsido_connect
                             //ループのチェックボックスが入っていなければ終わる
                             if (!loopflag)
                             {
-                                if (boring_flag  && stepcnt < 3) {
-                                    stepcnt++;
-                                    break;
-                                }
+                               
                                 isAction = false;
                                 if (tcpflag)
                                 {
@@ -457,14 +473,28 @@ namespace Robotis_vsido_connect
                                 }
                                 return;
                             }
-                        }catch(System.Exception error){
-                            MessageBox.Show(error.Message);              
+                        }
+                        catch (System.Exception error)
+                        {
+                            MessageBox.Show(error.Message);
+                            isAction = false;
+                                   if (tcpflag)
+                                    {
+                                        toServerSend("ready");
+                                    }
+                            return;
                         }
                     }
                 }
                 catch (System.Exception ee)
                 {
-                    MessageBox.Show(ee.Message);
+                    if (tcpflag)
+                    {
+                        toServerSend("ready");
+                    }
+                    MessageBox.Show(ee.Message); 
+                    isAction = false;
+                    return;
                 }
             }
         }
@@ -472,10 +502,12 @@ namespace Robotis_vsido_connect
         //ループ
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (loopflag){
+            if (loopflag)
+            {
                 loopflag = false;
             }
-            else{
+            else
+            {
                 loopflag = true;
             }
         }
@@ -489,18 +521,30 @@ namespace Robotis_vsido_connect
         //フリーコマンド
         private void button6_Click(object sender, EventArgs e)
         {
-            byte[] command = System.Text.Encoding.ASCII.GetBytes(textBox5.Text);
-            if (iswifi){
-               Cl.Send(command);
+            var values = textBox5.Text.Split(' ');
+            foreach (var value in values)
+            {
+             if (value == "ff")
+             { 
+                command_list = new List<byte>();
+             }
+             command_list.Add(Convert.ToByte(value, 16));
+             } 
+             byte[] command = command_list.ToArray();
+            
+            if (iswifi)
+            {
+                Cl.Send(command);
             }
-            else {
-               serialport.Write(command, 0, command.Length);            
+            else
+            {
+                serialport.Write(command, 0, command.Length);
             }
             System.Threading.Thread.Sleep(Convert.ToInt32(command[3]) * 10); //送信間隔
         }
 
-//テキストボックスをダブルクリックされたらダイアログを開く
-         private void textBox1_Click(object sender, EventArgs e)
+        //テキストボックスをダブルクリックされたらダイアログを開く
+        private void textBox1_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.InitialDirectory = @"C:\";
@@ -515,105 +559,115 @@ namespace Robotis_vsido_connect
                 textBox1.Text = Path.GetFileName(motion1file);
             }
         }
-         private void textBox2_Click(object sender, EventArgs e)
-         {
-             OpenFileDialog ofd = new OpenFileDialog();
-             ofd.InitialDirectory = @"C:\";
-             ofd.Filter = "CSVファイル|*.csv";
-             ofd.FilterIndex = 0;
-             ofd.Title = "開くファイルを選択してください";
-             ofd.CheckFileExists = true;
+        private void textBox2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = @"C:\";
+            ofd.Filter = "CSVファイル|*.csv";
+            ofd.FilterIndex = 0;
+            ofd.Title = "開くファイルを選択してください";
+            ofd.CheckFileExists = true;
 
-             if (ofd.ShowDialog() == DialogResult.OK)
-             {
-                 motion2file = ofd.FileName;
-                 textBox2.Text = Path.GetFileName(motion2file);
-             }
-         }
-         private void textBox3_Click(object sender, EventArgs e)
-         {
-             OpenFileDialog ofd = new OpenFileDialog();
-             ofd.InitialDirectory = @"C:\";
-             ofd.Filter = "CSVファイル|*.csv";
-             ofd.FilterIndex = 0;
-             ofd.Title = "開くファイルを選択してください";
-             ofd.CheckFileExists = true;
-
-             if (ofd.ShowDialog() == DialogResult.OK)
-             {
-                 motion3file = ofd.FileName;
-                 textBox3.Text = Path.GetFileName(motion3file);
-             }
-         }
-         private void textBox4_Click(object sender, EventArgs e)
-         {
-             OpenFileDialog ofd = new OpenFileDialog();
-             ofd.InitialDirectory = @"C:\";
-             ofd.Filter = "CSVファイル|*.csv";
-             ofd.FilterIndex = 0;
-             ofd.Title = "開くファイルを選択してください";
-             ofd.CheckFileExists = true;
-
-             if (ofd.ShowDialog() == DialogResult.OK)
-             {
-                 motion4file = ofd.FileName;
-                 textBox4.Text = Path.GetFileName(motion4file);
-             }
-         }
-        
-//棒立ちボタン    
-        private void button7_Click(object sender, EventArgs e)
-         {
-             string file = defaultmotion;
-             if (file != "")
-             {
-                 motion_thread = new Thread(FileAnalyze);
-                 motion_thread.IsBackground = true;
-                 motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
-                 motion_thread.Start(file);
-             }
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                motion2file = ofd.FileName;
+                textBox2.Text = Path.GetFileName(motion2file);
+            }
         }
-//実行ボタン
-         private void DoButton_Click(object sender, EventArgs e)
-         {
+        private void textBox3_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = @"C:\";
+            ofd.Filter = "CSVファイル|*.csv";
+            ofd.FilterIndex = 0;
+            ofd.Title = "開くファイルを選択してください";
+            ofd.CheckFileExists = true;
 
-             if (textBox6.Text == null && !isAction) {
-                 return;
-             }
-             string file = fullpath;
-             motion_thread = new Thread(FileAnalyze);
-             motion_thread.IsBackground = true;
-             motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
-             motion_thread.Start(file);
-         }
-//たいくつ 
-         private void boring_CheckedChanged(object sender, EventArgs e)
-         {
-             if (boringTimer.Enabled) {
-                 boringTimer.Stop();
-             }else{
-             boringTimer.Start();
-             }
-         }
-//wifiのラジオボタン
-         private void wifibutton_click(object sender, EventArgs e)
-         {
-                 wifibutton.Checked = true;
-                 wirebutton.Checked = false;
-                 label1.Enabled = false;
-                 comboBox1.Enabled = false;
-                 iswifi = true;
-         }
-//有線のラジオボタン
-         private void wirebutton_click(object sender, EventArgs e)
-         {
-                 wifibutton.Checked = false;
-                 wirebutton.Checked = true;
-                 label1.Enabled = true;
-                 comboBox1.Enabled = true;
-                 iswifi = false;
-         }
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                motion3file = ofd.FileName;
+                textBox3.Text = Path.GetFileName(motion3file);
+            }
+        }
+        private void textBox4_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = @"C:\";
+            ofd.Filter = "CSVファイル|*.csv";
+            ofd.FilterIndex = 0;
+            ofd.Title = "開くファイルを選択してください";
+            ofd.CheckFileExists = true;
 
-	}
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                motion4file = ofd.FileName;
+                textBox4.Text = Path.GetFileName(motion4file);
+            }
+        }
+
+        //棒立ちボタン    
+        private void button7_Click(object sender, EventArgs e)
+        {
+            string file = defaultmotion;
+            if (file != "")
+            {
+               
+                    motion_thread = new Thread(FileAnalyze);
+                    motion_thread.IsBackground = true;
+                    motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                    motion_thread.Start(file);
+            }
+        }
+        //実行ボタン
+        private void DoButton_Click(object sender, EventArgs e)
+        {
+
+            if (textBox6.Text == null && !isAction)
+            {
+                return;
+            }
+            string file = fullpath;
+            motion_thread = new Thread(FileAnalyze);
+            motion_thread.IsBackground = true;
+            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            motion_thread.Start(file);
+        }
+        //wifiのラジオボタン
+        private void wifibutton_click(object sender, EventArgs e)
+        {
+            wifibutton.Checked = true;
+            wirebutton.Checked = false;
+            label1.Enabled = false;
+            comboBox1.Enabled = false;
+            iswifi = true;
+        }
+        //有線のラジオボタン
+        private void wirebutton_click(object sender, EventArgs e)
+        {
+            wifibutton.Checked = false;
+            wirebutton.Checked = true;
+            label1.Enabled = true;
+            comboBox1.Enabled = true;
+            iswifi = false;
+        }
+
+        //たいくつ 
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (boring_flag)
+            {
+                boringTimer.Enabled = false;
+                radioButton1.Text = "有効";
+                boring_flag = false;
+            }
+            else
+            {
+                boringTimer.Enabled = true;
+                radioButton1.Text = "無効";
+                boring_flag = true;
+            }
+        }
+
+    }
 
 }

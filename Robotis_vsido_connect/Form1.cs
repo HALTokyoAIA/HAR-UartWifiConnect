@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Media;
+
+//playmusic
 
 namespace Robotis_vsido_connect
 {
@@ -42,6 +45,7 @@ namespace Robotis_vsido_connect
         Thread MotionThread = null;
         string fullpath = "";
         int timer_counter = 0;
+        SoundPlayer soundplayer = null;
 
         /// <summary>
         /// モーションファイル(.csv)
@@ -53,6 +57,7 @@ namespace Robotis_vsido_connect
         string defaultmotion = "default.csv";
         string kickmotion = "kick.csv";
         string stepmotion = "boringstep.csv";
+        string dancefile = "dance_all.csv";
 
 
         //フラグ
@@ -62,6 +67,7 @@ namespace Robotis_vsido_connect
         bool tcpflag = false;
         bool boring_flag = false;
         bool iswifi = true;
+        bool danceflag = false;
 
 
         public Form1()
@@ -459,6 +465,8 @@ namespace Robotis_vsido_connect
                                     {
                                         toServerSend("ready");
                                     }
+                                    StopSound();
+                                    danceflag = false;
                                     return;
                                 }
                             }
@@ -471,8 +479,11 @@ namespace Robotis_vsido_connect
                                 {
                                     toServerSend("ready");
                                 }
+                                StopSound();
+                                danceflag = false;
                                 return;
                             }
+                            PlaySound("Rob_music2.wav");
                         }
                         catch (System.Exception error)
                         {
@@ -516,6 +527,7 @@ namespace Robotis_vsido_connect
         private void button5_Click(object sender, EventArgs e)
         {
             stopflag = true;
+           
         }
 
         //フリーコマンド
@@ -543,6 +555,93 @@ namespace Robotis_vsido_connect
             System.Threading.Thread.Sleep(Convert.ToInt32(command[3]) * 10); //送信間隔
         }
 
+        //棒立ちボタン    
+        private void button7_Click(object sender, EventArgs e)
+        {
+            string file = defaultmotion;
+            if (file != "")
+            {
+
+                motion_thread = new Thread(FileAnalyze);
+                motion_thread.IsBackground = true;
+                motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                motion_thread.Start(file);
+            }
+        }
+
+        //実行ボタン
+        private void DoButton_Click(object sender, EventArgs e)
+        {
+
+            if (textBox6.Text == null && !isAction)
+            {
+                return;
+            }
+            string file = fullpath;
+            motion_thread = new Thread(FileAnalyze);
+            motion_thread.IsBackground = true;
+            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            motion_thread.Start(file);
+        }
+        //wifiのラジオボタン
+        private void wifibutton_click(object sender, EventArgs e)
+        {
+            wifibutton.Checked = true;
+            wirebutton.Checked = false;
+            label1.Enabled = false;
+            comboBox1.Enabled = false;
+            iswifi = true;
+        }
+        //有線のラジオボタン
+        private void wirebutton_click(object sender, EventArgs e)
+        {
+            wifibutton.Checked = false;
+            wirebutton.Checked = true;
+            label1.Enabled = true;
+            comboBox1.Enabled = true;
+            iswifi = false;
+        }
+
+
+        private void dance_Button_Click(object sender, EventArgs e)
+        {
+            danceflag = true;
+            PlaySound("Rob_music2.wav");
+            string file = dancefile;
+            motion_thread = new Thread(FileAnalyze);
+            motion_thread.IsBackground = true;
+            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            motion_thread.Start(file);
+        }
+
+
+//BGM関係
+        private void PlaySound(string waveFile)
+        {
+            if (soundplayer != null)
+            {
+                StopSound();
+            }
+            soundplayer = new SoundPlayer(waveFile);
+            soundplayer.Play();
+            //soundplayer.PlaySync();
+            //          soundplayer.PlayLooping();
+        }
+        private void StopSound()
+        {
+            if (soundplayer != null)
+            {
+                soundplayer.Stop();
+                soundplayer.Dispose();
+                soundplayer = null;
+                
+            }
+        }
+
+
+
+
+//上位システム
         //テキストボックスをダブルクリックされたらダイアログを開く
         private void textBox1_Click(object sender, EventArgs e)
         {
@@ -605,51 +704,6 @@ namespace Robotis_vsido_connect
             }
         }
 
-        //棒立ちボタン    
-        private void button7_Click(object sender, EventArgs e)
-        {
-            string file = defaultmotion;
-            if (file != "")
-            {
-               
-                    motion_thread = new Thread(FileAnalyze);
-                    motion_thread.IsBackground = true;
-                    motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
-                    motion_thread.Start(file);
-            }
-        }
-        //実行ボタン
-        private void DoButton_Click(object sender, EventArgs e)
-        {
-
-            if (textBox6.Text == null && !isAction)
-            {
-                return;
-            }
-            string file = fullpath;
-            motion_thread = new Thread(FileAnalyze);
-            motion_thread.IsBackground = true;
-            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
-            motion_thread.Start(file);
-        }
-        //wifiのラジオボタン
-        private void wifibutton_click(object sender, EventArgs e)
-        {
-            wifibutton.Checked = true;
-            wirebutton.Checked = false;
-            label1.Enabled = false;
-            comboBox1.Enabled = false;
-            iswifi = true;
-        }
-        //有線のラジオボタン
-        private void wirebutton_click(object sender, EventArgs e)
-        {
-            wifibutton.Checked = false;
-            wirebutton.Checked = true;
-            label1.Enabled = true;
-            comboBox1.Enabled = true;
-            iswifi = false;
-        }
 
         //たいくつ 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)

@@ -70,6 +70,7 @@
             this.wifibutton = new System.Windows.Forms.RadioButton();
             this.wirebutton = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.dance_Button = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
@@ -258,7 +259,7 @@
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(13, 124);
+            this.textBox5.Location = new System.Drawing.Point(13, 154);
             this.textBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(272, 22);
@@ -266,7 +267,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(296, 124);
+            this.button6.Location = new System.Drawing.Point(296, 154);
             this.button6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 31);
@@ -278,7 +279,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(13, 108);
+            this.label6.Location = new System.Drawing.Point(13, 127);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(81, 15);
             this.label6.TabIndex = 26;
@@ -366,10 +367,10 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(13, 52);
+            this.button7.Location = new System.Drawing.Point(243, 73);
             this.button7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(101, 29);
+            this.button7.Size = new System.Drawing.Size(127, 29);
             this.button7.TabIndex = 38;
             this.button7.Text = "棒立ち";
             this.button7.UseVisualStyleBackColor = true;
@@ -472,6 +473,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.dance_Button);
             this.groupBox1.Controls.Add(this.button8);
             this.groupBox1.Controls.Add(this.textBox6);
             this.groupBox1.Controls.Add(this.button7);
@@ -488,6 +490,17 @@
             this.groupBox1.Size = new System.Drawing.Size(384, 286);
             this.groupBox1.TabIndex = 48;
             this.groupBox1.TabStop = false;
+            // 
+            // dance_Button
+            // 
+            this.dance_Button.Location = new System.Drawing.Point(33, 73);
+            this.dance_Button.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dance_Button.Name = "dance_Button";
+            this.dance_Button.Size = new System.Drawing.Size(127, 29);
+            this.dance_Button.TabIndex = 41;
+            this.dance_Button.Text = "ダンス！";
+            this.dance_Button.UseVisualStyleBackColor = true;
+            this.dance_Button.Click += new System.EventHandler(this.dance_Button_Click);
             // 
             // groupBox2
             // 
@@ -608,6 +621,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.Button dance_Button;
 	}
 }
 

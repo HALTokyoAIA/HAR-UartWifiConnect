@@ -36,3 +36,11 @@ C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debu
 C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Form1.resources
 C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Properties.Resources.resources
 C:\Users\USER\Desktop\HAR\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.csproj.GenerateResource.Cache
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.exe
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.pdb
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\bin\Debug\Robotis_vsido_connect.exe
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\bin\Debug\Robotis_vsido_connect.pdb
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.csprojResolveAssemblyReference.cache
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Form1.resources
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.Properties.Resources.resources
+C:\Users\Simeon\Source\Repos\HAR-UartWifiConnect\Robotis_vsido_connect\obj\x86\Debug\Robotis_vsido_connect.csproj.GenerateResource.Cache

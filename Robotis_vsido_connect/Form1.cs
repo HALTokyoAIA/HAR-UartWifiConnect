@@ -22,7 +22,7 @@ namespace Robotis_vsido_connect
     public partial class Form1 : Form
     {
         ComboBox comb;      //comポート一覧
-        SerialPort serialport;    //しりあるポート
+        SerialPort serialport=null;    //しりあるポート
         List<byte> command_list = new List<byte>();
 
         //上位システム
@@ -37,7 +37,7 @@ namespace Robotis_vsido_connect
         //robotismini-wifi
         string RobotisHost = "192.168.4.1";
         int RobotisPort = 55555;
-        Client Cl;
+        Client Cl = null;
 
         //他  
         System.Text.Encoding enc = null;
@@ -91,9 +91,9 @@ namespace Robotis_vsido_connect
             groupBox1.Enabled = false;
             groupBox2.Enabled = false;
 
-            motion_thread = new Thread(FileAnalyze);
-            motion_thread.IsBackground = true;
-            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            //      motion_thread = new Thread(FileAnalyze);
+            //    motion_thread.IsBackground = true;
+            //  motion_thread.Priority = System.Threading.ThreadPriority.Normal;
 
         }
 
@@ -197,12 +197,12 @@ namespace Robotis_vsido_connect
 
                 TcpReadThread = new Thread(TcpRead);
                 TcpReadThread.IsBackground = true;
-                TcpReadThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                TcpReadThread.Priority = System.Threading.ThreadPriority.Normal;
                 TcpReadThread.Start();
 
                 MotionThread = new Thread(TcpFunc);
                 MotionThread.IsBackground = true;
-                MotionThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                MotionThread.Priority = System.Threading.ThreadPriority.Normal;
                 MotionThread.Start();
             }
             catch (Exception err)
@@ -226,7 +226,7 @@ namespace Robotis_vsido_connect
                 RandomMotion();
                 timer_counter = 0;
             }
-            label19.Text = timer_counter.ToString() + "s";
+//            label19.Text = timer_counter.ToString() + "s";
         }
 
 
@@ -239,6 +239,7 @@ namespace Robotis_vsido_connect
                 byte[] resBytes = new byte[2048];
                 int resSize = 0;
                 int s;
+
                 do
                 {
                     resSize = ns.Read(resBytes, 0, resBytes.Length);
@@ -253,7 +254,7 @@ namespace Robotis_vsido_connect
                 ms.Close();
                 resMsg = resMsg.TrimEnd('\n');
                 SplittedMes = resMsg.Split(';');
-                label15.Text = SplittedMes[1];
+  //              label15.Text = SplittedMes[1];
                 s = Cl.read();
             }
         }
@@ -263,7 +264,7 @@ namespace Robotis_vsido_connect
             System.Text.Encoding enc = System.Text.Encoding.UTF8;
             byte[] sendBytes = enc.GetBytes(sendMsg + '\n');
             ns.Write(sendBytes, 0, sendBytes.Length);
-
+            
         }
 
         //上位システム動作
@@ -286,7 +287,7 @@ namespace Robotis_vsido_connect
                         {
                             motion_thread = new Thread(FileAnalyze);
                             motion_thread.IsBackground = true;
-                            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                             motion_thread.Start(file);
                         }
                     }
@@ -299,7 +300,7 @@ namespace Robotis_vsido_connect
                         {
                             motion_thread = new Thread(FileAnalyze);
                             motion_thread.IsBackground = true;
-                            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                             motion_thread.Start(file);
                         }
                     }
@@ -312,7 +313,7 @@ namespace Robotis_vsido_connect
                         {
                             motion_thread = new Thread(FileAnalyze);
                             motion_thread.IsBackground = true;
-                            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                             motion_thread.Start(file);
                         }
                     }
@@ -325,21 +326,22 @@ namespace Robotis_vsido_connect
                         {
                             motion_thread = new Thread(FileAnalyze);
                             motion_thread.IsBackground = true;
-                            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                            motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                             motion_thread.Start(file);
                         }
                     }
                     else if (SplittedMes[0] == "0000")
                     {
-                        resMsg = null;
-                        string file = defaultmotion;
-                        if (file != "")
-                        {
-                            motion_thread = new Thread(FileAnalyze);
-                            motion_thread.IsBackground = true;
-                            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
-                            motion_thread.Start(file);
-                        }
+                        /*  resMsg = null;
+                          string file = defaultmotion;
+                          if (file != "")
+                          {
+                              motion_thread = new Thread(FileAnalyze);
+                              motion_thread.IsBackground = true;
+                              motion_thread.Priority = System.Threading.ThreadPriority.Normal;
+                              motion_thread.Start(file);
+                          }
+                          */
                     }
                     resMsg = null;
                 }
@@ -359,7 +361,7 @@ namespace Robotis_vsido_connect
                 {
                     motion_thread = new Thread(FileAnalyze);
                     motion_thread.IsBackground = true;
-                    motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                    motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                     motion_thread.Start(file);
                 }
             }
@@ -371,7 +373,7 @@ namespace Robotis_vsido_connect
                 {
                     motion_thread = new Thread(FileAnalyze);
                     motion_thread.IsBackground = true;
-                    motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                    motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                     motion_thread.Start(file);
                 }
             }
@@ -396,7 +398,7 @@ namespace Robotis_vsido_connect
                 fullpath = file;
                 motion_thread = new Thread(FileAnalyze);
                 motion_thread.IsBackground = true;
-                motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                 motion_thread.Start(file);
             }
         }
@@ -483,7 +485,10 @@ namespace Robotis_vsido_connect
                                 danceflag = false;
                                 return;
                             }
-                            PlaySound("Rob_music2.wav");
+                            if (danceflag)
+                            {
+                                PlaySound("Rob_music2.wav");
+                            }
                         }
                         catch (System.Exception error)
                         {
@@ -564,7 +569,7 @@ namespace Robotis_vsido_connect
 
                 motion_thread = new Thread(FileAnalyze);
                 motion_thread.IsBackground = true;
-                motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+                motion_thread.Priority = System.Threading.ThreadPriority.Normal;
                 motion_thread.Start(file);
             }
         }
@@ -580,7 +585,7 @@ namespace Robotis_vsido_connect
             string file = fullpath;
             motion_thread = new Thread(FileAnalyze);
             motion_thread.IsBackground = true;
-            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            motion_thread.Priority = System.Threading.ThreadPriority.Normal;
             motion_thread.Start(file);
         }
         //wifiのラジオボタン
@@ -610,7 +615,7 @@ namespace Robotis_vsido_connect
             string file = dancefile;
             motion_thread = new Thread(FileAnalyze);
             motion_thread.IsBackground = true;
-            motion_thread.Priority = System.Threading.ThreadPriority.BelowNormal;
+            motion_thread.Priority = System.Threading.ThreadPriority.Normal;
             motion_thread.Start(file);
         }
 
@@ -624,6 +629,7 @@ namespace Robotis_vsido_connect
             }
             soundplayer = new SoundPlayer(waveFile);
             soundplayer.Play();
+            danceflag = true;
             //soundplayer.PlaySync();
             //          soundplayer.PlayLooping();
         }
@@ -631,6 +637,7 @@ namespace Robotis_vsido_connect
         {
             if (soundplayer != null)
             {
+                danceflag = false;
                 soundplayer.Stop();
                 soundplayer.Dispose();
                 soundplayer = null;

@@ -13,15 +13,14 @@ namespace Robotis_vsido_connect
 {
     class Client
     {
-        TcpClient client;
+        TcpClient client=null;
         /*クラス全体でストリームライターが使えるようにする*/
-        private StreamWriter sw;
-        private StreamReader sr;
+        private StreamWriter sw=null;
+        private StreamReader sr=null;
 
         public Client(string ipAddress, int portNum)
         {
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ipAddress), portNum);
-
             client = new TcpClient();
 
             /*サーバーに接続できたかの判定*/
@@ -78,7 +77,7 @@ namespace Robotis_vsido_connect
         /*受信処理*/
         private void Recive()
         {
-            do
+          /*  do
             {
                 str = sr.Read();
                 if (str == 0)
@@ -88,7 +87,8 @@ namespace Robotis_vsido_connect
                 Console.Write(str);
                 readflg = true;
             } while (true);
-        }
+        */
+            }
 
         /*データの受信*/
         public int read()

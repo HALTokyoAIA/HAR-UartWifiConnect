@@ -425,7 +425,8 @@ namespace Robotis_vsido_connect
 				int sleeptime = 0;
 				isAction = true;
 
-				while (true)
+				bool TaskRunAlive = true;
+				while (TaskRunAlive)
 				{
 					try
 					{
@@ -485,13 +486,13 @@ namespace Robotis_vsido_connect
 										StopSound();
 										danceflag = false;
 										//return;
+										TaskRunAlive = false;
 										break;
 									}
 								}
 								//ループのチェックボックスが入っていなければ終わる
 								if (!loopflag)
 								{
-
 									isAction = false;
 									if (tcpflag)
 									{
@@ -500,6 +501,7 @@ namespace Robotis_vsido_connect
 									StopSound();
 									danceflag = false;
 									//return;
+									TaskRunAlive = false;
 									break;
 								}
 								if (danceflag)
@@ -516,6 +518,7 @@ namespace Robotis_vsido_connect
 									toServerSend("ready");
 								}
 								//return;
+								TaskRunAlive = false;
 								break;
 							}
 						}
@@ -529,6 +532,7 @@ namespace Robotis_vsido_connect
 						MessageBox.Show(ee.Message);
 						isAction = false;
 						//return;
+						TaskRunAlive = false;
 						break;
 					}
 				}

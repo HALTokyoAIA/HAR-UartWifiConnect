@@ -22,6 +22,7 @@ namespace Robotis_vsido_connect
         {
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ipAddress), portNum);
             client = new TcpClient();
+			client.NoDelay = true;
 
             /*サーバーに接続できたかの判定*/
             try

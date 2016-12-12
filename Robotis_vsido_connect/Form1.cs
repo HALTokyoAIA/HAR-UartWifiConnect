@@ -56,8 +56,8 @@ namespace Robotis_vsido_connect
 		string motion2file = "byebye.csv";
 		string motion3file = "circle.csv";
 		//string motion4file = "guru.csv";
-        string motion4file = "guru.csv";
-        string defaultmotion = "default.csv";
+		string motion4file = "guru.csv";
+		string defaultmotion = "default.csv";
 		string kickmotion = "kick.csv";
 		string stepmotion = "boringstep.csv";
 		string dancefile = "dance_all.csv";
